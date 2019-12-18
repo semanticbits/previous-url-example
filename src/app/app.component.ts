@@ -2,9 +2,14 @@ import { BehaviorSubject } from 'rxjs';
 import { filter, pairwise } from 'rxjs/operators';
 
 import { Component } from '@angular/core';
-import { NavigationEnd, Router, RoutesRecognized, NavigationStart } from '@angular/router';
+import {
+  NavigationEnd,
+  Router,
+  RoutesRecognized,
+  NavigationStart
+} from '@angular/router';
 
-import { RouterHistoryService } from './services';
+import { RouterHistoryService, WindowService } from './services';
 
 @Component({
   selector: 'app-root',
@@ -20,23 +25,37 @@ export class AppComponent {
   previousUrlViaRoutesRecognized$ = new BehaviorSubject<string>(null);
   currentUrlViaRoutesRecognized$ = new BehaviorSubject<string>(null);
 
+  // Via RouterHistoryService
   previousUrlViaRouterHistoryService$ = this.routerHistoryService.previousUrl$;
   currentUrlViaRouterHistoryService$ = this.routerHistoryService.currentUrl$;
 
+  logs: { event: string; message: string }[] = [];
+
   constructor(
     router: Router,
-    private routerHistoryService: RouterHistoryService
+    private routerHistoryService: RouterHistoryService,
+    private windowService: WindowService
   ) {
-    this.currentUrlViaNavigationEnd$.next(router.url);
+    // Event logging only
     router.events.subscribe(event => {
       if (event instanceof NavigationStart) {
-        console.log('NavigationStart', JSON.stringify(event));
+        this.logs.push({
+          event: 'NavigationStart',
+          message: JSON.stringify(event)
+        });
       }
 
       if (event instanceof NavigationEnd) {
-        console.log('NavigationEnd', JSON.stringify(event));
+        this.logs.push({
+          event: 'NavigationEnd',
+          message: JSON.stringify(event)
+        });
       }
+    });
 
+    // Via Navigation End Event
+    this.currentUrlViaNavigationEnd$.next(router.url);
+    router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
         this.previousUrlViaNavigationEnd$.next(
           this.currentUrlViaNavigationEnd$.value
@@ -45,6 +64,7 @@ export class AppComponent {
       }
     });
 
+    // Via RoutesRecognized
     router.events
       .pipe(
         filter(evt => evt instanceof RoutesRecognized),
@@ -56,5 +76,10 @@ export class AppComponent {
           this.currentUrlViaRoutesRecognized$.next(current.urlAfterRedirects);
         }
       );
+  }
+
+  onClick($event: MouseEvent): void {
+    $event.preventDefault();
+    this.windowService.nativeWindow.history.back();
   }
 }

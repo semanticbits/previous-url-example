@@ -2,10 +2,23 @@ a {
   margin-right: 10px;
 }
 
-div {
+.mb-20 {
   margin-bottom: 20px;
 }
 
 hr {
   margin: 50px 0;
+}
+
+div.flex {
+  display: flex;
+
+  > div {
+    margin-right: 100px;
+  }
+}
+
+div.logs {
+  border: 1px solid;
+  padding: 5px;
 }

@@ -1,31 +1,49 @@
-<div>
+<div class="mb-20">
   <a [routerLink]="['/']">Home</a>
   <a [routerLink]="['/about']">About</a>
   <a [routerLink]="['/company']">Company</a>
   <a [routerLink]="['/products']">Products</a>
 </div>
-<div>
-  <a [routerLink]="previousUrlViaRoutesRecognized$ | async">&lt; Back</a>
+<div class="mb-20">
+  <a
+    [href]="previousUrlViaRouterHistoryService$ | async"
+    (click)="onClick($event)"
+    >&lt; Back</a
+  >
 </div>
 
 <router-outlet></router-outlet>
 
 <hr />
 
-<div>
-  <h4>Via NavigationEnd</h4>
-  <div>previous URL: {{ previousUrlViaNavigationEnd$ | async }}</div>
-  <div>current URL: {{ currentUrlViaNavigationEnd$ | async }}</div>
-</div>
+<div class="flex">
+  <div>
+    <div class="mb-20">
+      <h4>Via NavigationEnd</h4>
+      <div>previous URL: {{ previousUrlViaNavigationEnd$ | async }}</div>
+      <div>current URL: {{ currentUrlViaNavigationEnd$ | async }}</div>
+    </div>
 
-<div>
-  <h4>Via RoutesRecognized</h4>
-  <div>previous URL: {{ previousUrlViaRoutesRecognized$ | async }}</div>
-  <div>current URL: {{ currentUrlViaRoutesRecognized$ | async }}</div>
-</div>
+    <div class="mb-20">
+      <h4>Via RoutesRecognized</h4>
+      <div>previous URL: {{ previousUrlViaRoutesRecognized$ | async }}</div>
+      <div>current URL: {{ currentUrlViaRoutesRecognized$ | async }}</div>
+    </div>
 
-<div>
-  <h4>Via RouterHistoryService</h4>
-  <div>previous URL: {{ previousUrlViaRouterHistoryService$ | async }}</div>
-  <div>current URL: {{ currentUrlViaRouterHistoryService$ | async }}</div>
+    <div class="mb-20">
+      <h4>Via RouterHistoryService</h4>
+      <div>previous URL: {{ previousUrlViaRouterHistoryService$ | async }}</div>
+      <div>current URL: {{ currentUrlViaRouterHistoryService$ | async }}</div>
+    </div>
+  </div>
+  <div>
+    <h4>Navigation Events</h4>
+    <div class="logs">
+      <!-- prettier-ignore-->
+      <div *ngFor="let log of logs; index as i">
+        <p><strong>{{ log.event }}</strong>{{ log.message }}</p>
+        <hr *ngIf="i % 2 > 0" />
+      </div>
+    </div>
+  </div>
 </div>
